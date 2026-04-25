@@ -38,12 +38,20 @@ async function proxyRequest(ctx: Context, upstreamPath: string, method?: string)
     ? JSON.stringify(ctx.request.body || {})
     : undefined
 
-  const res = await fetch(url, {
-    method: method || ctx.req.method,
-    headers,
-    body,
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  })
+  let res: Response
+  try {
+    res = await fetch(url, {
+      method: method || ctx.req.method,
+      headers,
+      body,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    })
+  } catch (err: any) {
+    ctx.status = 502
+    ctx.set('Content-Type', 'application/json')
+    ctx.body = { error: { message: `Upstream unavailable: ${err?.message || 'network error'}` } }
+    return
+  }
 
   if (!res.ok) {
     ctx.status = 502

@@ -34,6 +34,10 @@ export async function list(ctx: any) {
     for (const cat of categories) { cat.skills.sort((a: any, b: any) => a.name.localeCompare(b.name)) }
     ctx.body = { categories }
   } catch (err: any) {
+    if (err?.code === 'ENOENT') {
+      ctx.body = { categories: [] }
+      return
+    }
     ctx.status = 500
     ctx.body = { error: `Failed to read skills directory: ${err.message}` }
   }

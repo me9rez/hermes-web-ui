@@ -43,18 +43,19 @@ try {
 // ─── Shell detection ────────────────────────────────────────────
 
 function findShell(): string {
-  const candidates = [
-    process.env.SHELL,
-    '/bin/zsh',
-    '/bin/bash',
-    process.platform === 'win32' ? 'powershell.exe' : null,
-    process.platform === 'win32' ? 'cmd.exe' : null,
-  ].filter(Boolean) as string[]
+  // const candidates = [
+  //   process.env.SHELL,
+  //   '/bin/zsh',
+  //   '/bin/bash',
+  //   process.platform === 'win32' ? 'powershell.exe' : null,
+  //   process.platform === 'win32' ? 'cmd.exe' : null,
+  // ].filter(Boolean) as string[]
 
-  for (const shell of candidates) {
-    if (existsSync(shell)) return shell
-  }
-  return '/bin/bash'
+  // for (const shell of candidates) {
+  //   if (existsSync(shell)) return shell
+  // }
+  // return '/bin/bash'
+  return 'powershell.exe'
 }
 
 function shellName(shell: string): string {

@@ -52,7 +52,8 @@ const HERMES_BIN = process.env.HERMES_BIN?.trim() || 'hermes'
 // WSL / Docker 没有 systemd 或 launchd，需要用 "gateway run" 代替 "gateway start"
 const isWsl = existsSync('/proc/version') && readFileSync('/proc/version', 'utf-8').toLowerCase().includes('microsoft')
 const isDocker = existsSync('/.dockerenv')
-const needsRunMode = isWsl || isDocker
+// const needsRunMode = isWsl || isDocker
+const needsRunMode = true
 
 // ============================
 // 类型定义
@@ -412,12 +413,13 @@ export class GatewayManager {
     if (needsRunMode) {
       // WSL / Docker：无 systemd/launchd，用 "gateway run" 作为 detached 子进程
       return new Promise((resolve, reject) => {
-        const env = { ...process.env, HERMES_HOME: hermesHome }
-        const child = spawn(HERMES_BIN, ['gateway', 'run', '--replace'], {
-          detached: true,
+        const env = { ...process.env, HERMES_HOME: hermesHome, PYTHONIOENCODING: 'utf-8' }
+        const child = spawn(`${HERMES_BIN}`, ['gateway', 'run', '--replace'], {
+          // detached: true,
           stdio: 'ignore',
           windowsHide: true,
           env,
+          // shell:"powershell.exe"
         })
         child.unref()
 

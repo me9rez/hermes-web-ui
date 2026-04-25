@@ -80,8 +80,8 @@ export async function bootstrap() {
   console.log('[bootstrap] SPA fallback registered')
 
   // Start server
-  console.log(`[bootstrap] listening on port ${config.port}`)
-  server = app.listen(config.port, '0.0.0.0')
+  console.log(`[bootstrap] listening on ${config.host}:${config.port}`)
+  server = app.listen(config.port, config.host)
   console.log('[bootstrap] app.listen called')
 
   setupTerminalWebSocket(server)
@@ -103,10 +103,15 @@ export async function bootstrap() {
   server.on('listening', () => {
     const interfaces = os.networkInterfaces()
     const localIp = Object.values(interfaces).flat().find(i => i?.family === 'IPv4' && !i?.internal)?.address || 'localhost'
-    console.log(`Server: http://localhost:${config.port} (LAN: http://${localIp}:${config.port})`)
+    const showLan = config.host === '0.0.0.0' || config.host === '::'
+    console.log(`Server: http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}${showLan ? ` (LAN: http://${localIp}:${config.port})` : ''}`)
     console.log(`Upstream: ${config.upstream}`)
     console.log(`Log: ~/.hermes-web-ui/logs/server.log`)
-    logger.info('Server: http://localhost:%d (LAN: http://%s:%d)', config.port, localIp, config.port)
+    if (showLan) {
+      logger.info('Server: http://localhost:%d (LAN: http://%s:%d)', config.port, localIp, config.port)
+    } else {
+      logger.info('Server: http://%s:%d', config.host, config.port)
+    }
     logger.info('Upstream: %s', config.upstream)
 
     // Restore group chat agents after server is ready
