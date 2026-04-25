@@ -22,7 +22,7 @@ import { logger } from './services/logger'
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined'
   ? __APP_VERSION__
-  : (() => { try { return JSON.parse(readFileSync(resolve(__dirname, '../../package.json'), 'utf-8')).version } catch { return 'dev' } })()
+  : (() => { try { return JSON.parse(readFileSync(resolve(__dirname, '../../../package.json'), 'utf-8')).version } catch { return 'dev' } })()
 
 // Global error handlers
 process.on('uncaughtException', (err) => {
